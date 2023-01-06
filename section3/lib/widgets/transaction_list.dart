@@ -11,24 +11,26 @@ class TransctionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: userTransctions.isEmpty
-          ? Column(
-              children: [
-                SizedBox(
-                  height: 50,
-                ),
-                Text('no transaction'),
-                SizedBox(
-                  height: 50,
-                ),
-                Container(
-                  height: 200,
-                  child: Image.asset(
-                    'assets/images/1.png',
-                    fit: BoxFit.cover,
+          ? LayoutBuilder(builder: (ctx, constraints) {
+              return Column(
+                children: [
+                  SizedBox(
+                    height: constraints.maxHeight * 0.1,
                   ),
-                ),
-              ],
-            )
+                  Text('no transaction'),
+                  SizedBox(
+                    height: constraints.maxHeight * 0.1,
+                  ),
+                  Container(
+                    height: constraints.maxHeight * 0.5,
+                    child: Image.asset(
+                      'assets/images/1.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ],
+              );
+            })
           : ListView.builder(
               itemBuilder: (ctx, index) {
                 return Card(

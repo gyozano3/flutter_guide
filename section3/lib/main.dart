@@ -1,4 +1,7 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:section3/widgets/chart.dart';
 import 'package:section3/widgets/new_transaction.dart';
 import 'package:section3/widgets/transaction_list.dart';
@@ -6,6 +9,10 @@ import 'package:section3/widgets/transaction_list.dart';
 import 'models/transaction.dart';
 
 void main() {
+  // LandScapeを許可しない設定
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations(
+  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
 }
 
@@ -53,6 +60,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _deleteTransaction(String id) {
+    print(MediaQuery.of(context).size.height);
+    print(MediaQuery.of(context).size.width);
     setState(() {
       _userTransctions.removeWhere((element) => element.id == id);
     });
@@ -66,36 +75,88 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
+  bool _showChart = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('家計簿'),
-        actions: [
-          IconButton(
-            onPressed: () => _startAddTransction(context),
-            icon: Icon(Icons.add),
-          )
-        ],
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
+    final isLand = MediaQuery.of(context).orientation == Orientation.landscape;
+
+    var pageBody = Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        if (isLand)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('ShowChart'),
+              Switch.adaptive(
+                  value: _showChart,
+                  onChanged: (val) => setState(() {
+                        _showChart = val;
+                      })),
+            ],
+          ),
+        if (isLand)
+          _showChart
+              ? Container(
+                  color: Colors.blue,
+                  child: Chart(_userTransctions),
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.6,
+                )
+              : Expanded(
+                  child:
+                      TransctionList(_recentTransactions, _deleteTransaction),
+                ),
+        if (!isLand)
           Container(
             color: Colors.blue,
             child: Chart(_userTransctions),
             width: double.infinity,
-            height: 160,
+            height: MediaQuery.of(context).size.height * 0.2,
           ),
+        if (!isLand)
           Expanded(
-              child: TransctionList(_recentTransactions, _deleteTransaction)),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _startAddTransction(context),
-      ),
+            child: TransctionList(_recentTransactions, _deleteTransaction),
+          ),
+      ],
     );
+    bool ios = false;
+
+    var appbar = ios
+        ? CupertinoNavigationBar(
+            middle: Text('ios app bar'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  child: Icon(CupertinoIcons.add),
+                  onTap: () => _startAddTransction(context),
+                )
+              ],
+            ))
+        : AppBar(
+            title: Text('家計簿'),
+            actions: [
+              IconButton(
+                onPressed: () => _startAddTransction(context),
+                icon: Icon(Icons.add),
+              )
+            ],
+          );
+    return ios
+        ? CupertinoPageScaffold(child: pageBody)
+        : Scaffold(
+            appBar: appbar as PreferredSizeWidget,
+            body: pageBody,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => _startAddTransction(context),
+                  ),
+          );
   }
 }
