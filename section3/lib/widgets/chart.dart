@@ -5,20 +5,20 @@ import 'package:section3/widgets/chart_bar.dart';
 import '../models/transaction.dart';
 
 class Chart extends StatelessWidget {
-  List<Transaction> userTransctions = [];
-  Chart(this.userTransctions);
+  List<Transaction> userTransactions = [];
+  Chart(this.userTransactions);
 
-  List<Map<String, Object>> get transctionValues {
+  List<Map<String, Object>> get transactionValues {
     return List.generate(7, (index) {
       final weekDay = DateTime.now().subtract(
         Duration(days: index),
       );
       double totalAmount = 0;
-      for (int i = 0; i < userTransctions.length; i++) {
-        if (userTransctions[i].date.day == weekDay.day &&
-            userTransctions[i].date.month == weekDay.month &&
-            userTransctions[i].date.year == weekDay.year) {
-          totalAmount += userTransctions[i].amount;
+      for (int i = 0; i < userTransactions.length; i++) {
+        if (userTransactions[i].date.day == weekDay.day &&
+            userTransactions[i].date.month == weekDay.month &&
+            userTransactions[i].date.year == weekDay.year) {
+          totalAmount += userTransactions[i].amount;
         }
       }
       return {
@@ -29,7 +29,7 @@ class Chart extends StatelessWidget {
   }
 
   double get maxSp {
-    return transctionValues.fold(
+    return transactionValues.fold(
         0, (sum, item) => sum + (item['amount'] as double));
   }
 
@@ -37,12 +37,12 @@ class Chart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
-      margin: EdgeInsets.all(20),
+      margin: const EdgeInsets.all(20),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: transctionValues.map((e) {
+          children: transactionValues.map((e) {
             return Flexible(
               fit: FlexFit.tight,
               child: ChartBar(

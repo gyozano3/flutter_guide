@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class NewTransction extends StatefulWidget {
+class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
-  NewTransction(this.addNewTransaction);
+  const NewTransaction(this.addNewTransaction, {super.key});
 
   @override
-  State<NewTransction> createState() => _NewTransctionState();
+  State<NewTransaction> createState() => _NewTransactionState();
 }
 
-class _NewTransctionState extends State<NewTransction> {
+class _NewTransactionState extends State<NewTransaction> {
   final titleController = TextEditingController();
 
   final amountController = TextEditingController();
@@ -62,39 +62,39 @@ class _NewTransctionState extends State<NewTransction> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               TextField(
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: const InputDecoration(labelText: 'Title'),
                 controller: titleController,
                 onSubmitted: (_) => _submitData(),
                 // onChanged: (val) => titleInput = val,
               ),
               TextField(
-                decoration: InputDecoration(labelText: 'Amount'),
+                decoration: const InputDecoration(labelText: 'Amount'),
                 controller: amountController,
                 keyboardType: TextInputType.number,
                 onSubmitted: (_) => _submitData(),
                 // onChanged: (val) => amountInput = val,
               ),
-              Container(
+              SizedBox(
                 height: 70,
                 child: Row(
                   children: [
                     Expanded(
                         child: Text(
                             'Picked:${DateFormat.yMd().format(pickedDate)}')),
-                    SizedBox(
+                    const SizedBox(
                       width: 50,
                     ),
                     OutlinedButton(
                         onPressed: _datePicker,
-                        style: ButtonStyle(),
-                        child: Text('chose date')),
+                        style: const ButtonStyle(),
+                        child: const Text('chose date')),
                   ],
                 ),
               ),
               ElevatedButton(
                   onPressed: _submitData,
-                  style: ButtonStyle(),
-                  child: Text('save')),
+                  style: const ButtonStyle(),
+                  child: const Text('save')),
             ],
           ),
         ),

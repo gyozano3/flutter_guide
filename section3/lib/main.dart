@@ -37,11 +37,11 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _userTransctions = [];
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  final List<Transaction> _userTransactions = [];
 
   List<Transaction> get _recentTransactions {
-    return _userTransctions
+    return _userTransactions
         .where(
             (tx) => tx.date.isAfter(DateTime.now().subtract(Duration(days: 7))))
         .toList();
@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
       date: picked,
     );
     setState(() {
-      _userTransctions.add(newTx);
+      _userTransactions.add(newTx);
     });
   }
 
@@ -63,62 +63,87 @@ class _MyHomePageState extends State<MyHomePage> {
     print(MediaQuery.of(context).size.height);
     print(MediaQuery.of(context).size.width);
     setState(() {
-      _userTransctions.removeWhere((element) => element.id == id);
+      _userTransactions.removeWhere((element) => element.id == id);
     });
   }
 
-  void _startAddTransction(BuildContext context) {
+  void _startAddTransaction(BuildContext context) {
     showModalBottomSheet(
         context: context,
         builder: (bCtx) {
-          return NewTransction(_addNewTransaction);
+          return NewTransaction(_addNewTransaction);
         });
+  }
+
+  List<Widget> _buildLandWidgets(bool _showChart) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('ShowChart'),
+          Switch.adaptive(
+              value: _showChart,
+              onChanged: (val) => setState(() {
+                    _showChart = val;
+                  })),
+        ],
+      ),
+      _showChart
+          ? Container(
+              color: Colors.blue,
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: Chart(_userTransactions),
+            )
+          : Expanded(
+              child: TransactionList(_recentTransactions, _deleteTransaction),
+            )
+    ];
+  }
+
+  List<Widget> _buildHoriWidgets(MediaQueryData mediaquery) {
+    return [
+      Container(
+        color: Colors.blue,
+        child: Chart(_userTransactions),
+        width: double.infinity,
+        height: mediaquery.size.height * 0.2,
+      ),
+      Expanded(
+        child: TransactionList(_recentTransactions, _deleteTransaction),
+      ),
+    ];
   }
 
   bool _showChart = false;
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  didChangeAppLifeCycleState(AppLifecycleState state) {
+    print(state);
+  }
+
+  @override
+  dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isLand = MediaQuery.of(context).orientation == Orientation.landscape;
+    final MediaQueryData mediaquery = MediaQuery.of(context);
+    final isLand = mediaquery.orientation == Orientation.landscape;
 
     var pageBody = Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (isLand)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('ShowChart'),
-              Switch.adaptive(
-                  value: _showChart,
-                  onChanged: (val) => setState(() {
-                        _showChart = val;
-                      })),
-            ],
-          ),
-        if (isLand)
-          _showChart
-              ? Container(
-                  color: Colors.blue,
-                  child: Chart(_userTransctions),
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.6,
-                )
-              : Expanded(
-                  child:
-                      TransctionList(_recentTransactions, _deleteTransaction),
-                ),
-        if (!isLand)
-          Container(
-            color: Colors.blue,
-            child: Chart(_userTransctions),
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height * 0.2,
-          ),
-        if (!isLand)
-          Expanded(
-            child: TransctionList(_recentTransactions, _deleteTransaction),
-          ),
+        if (isLand) ..._buildLandWidgets(_showChart),
+        if (!isLand) ..._buildHoriWidgets(mediaquery),
       ],
     );
     bool ios = false;
@@ -131,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 GestureDetector(
                   child: Icon(CupertinoIcons.add),
-                  onTap: () => _startAddTransction(context),
+                  onTap: () => _startAddTransaction(context),
                 )
               ],
             ))
@@ -139,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
             title: Text('家計簿'),
             actions: [
               IconButton(
-                onPressed: () => _startAddTransction(context),
+                onPressed: () => _startAddTransaction(context),
                 icon: Icon(Icons.add),
               )
             ],
@@ -155,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ? Container()
                 : FloatingActionButton(
                     child: Icon(Icons.add),
-                    onPressed: () => _startAddTransction(context),
+                    onPressed: () => _startAddTransaction(context),
                   ),
           );
   }

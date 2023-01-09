@@ -8,7 +8,8 @@ class AnsList extends StatelessWidget {
   final int i;
   final Function doaa;
 
-  AnsList({required this.q, required this.i, required this.doaa});
+  const AnsList(
+      {super.key, required this.q, required this.i, required this.doaa});
 
   @override
   Widget build(BuildContext context) {
