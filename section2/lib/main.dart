@@ -1,35 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:section2/answer.dart';
 import 'package:section2/result.dart';
 
 import 'anslist.dart';
-import 'question.dart';
-import 'result.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
-            title: Text('my first'),
+            title: const Text('my first'),
           ),
-          body: Sample()),
+          body: const Sample()),
     );
   }
 }
 
 class Sample extends StatefulWidget {
+  const Sample({super.key});
+
   @override
   State<Sample> createState() => _SampleState();
 }
 
 class _SampleState extends State<Sample> {
-  var _q = [
+  final _q = [
     {
       'text': 'do you need friend?',
       'ans': [

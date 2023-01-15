@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('ShowChart'),
+          const Text('ShowChart'),
           Switch.adaptive(
               value: _showChart,
               onChanged: (val) => setState(() {
@@ -105,9 +105,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     return [
       Container(
         color: Colors.blue,
-        child: Chart(_userTransactions),
         width: double.infinity,
         height: mediaquery.size.height * 0.2,
+        child: Chart(_userTransactions),
       ),
       Expanded(
         child: TransactionList(_recentTransactions, _deleteTransaction),
@@ -115,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     ];
   }
 
-  bool _showChart = false;
+  final bool _showChart = false;
 
   @override
   void initState() {
