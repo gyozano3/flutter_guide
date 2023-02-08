@@ -21,7 +21,7 @@ class _TabPageState extends State<TabPage> {
   @override
   void initState() {
     // TODO: implement initState
-    _pages = [CategoriesPage(), FavoritesPage(widget.favorites)];
+    _pages = [const CategoriesPage(), FavoritesPage(widget.favorites)];
     super.initState();
   }
 
@@ -37,7 +37,7 @@ class _TabPageState extends State<TabPage> {
       appBar: AppBar(
         title: Text(_titles[selectPageIndex]),
       ),
-      drawer: MainDrawer(),
+      drawer: const MainDrawer(),
       body: _pages[selectPageIndex],
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,
@@ -49,12 +49,12 @@ class _TabPageState extends State<TabPage> {
         items: [
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).colorScheme.primary,
-            icon: Icon(Icons.category),
+            icon: const Icon(Icons.category),
             label: 'Categories',
           ),
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).colorScheme.primary,
-            icon: Icon(Icons.star),
+            icon: const Icon(Icons.star),
             label: 'Favorites',
           ),
         ],
